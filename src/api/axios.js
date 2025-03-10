@@ -1,23 +1,25 @@
 import axios from 'axios';
 
 const api = axios.create({
-    baseURL: 'http://192.168.10.190:8080',
+    baseURL: 'http://13.60.94.155:8080',
     headers: {
-        'Content-Type': 'application/json',
-        'Accept': 'application/json'
+        'Content-Type': 'application/json'
     }
 });
 
-// İstek interceptor'ı
-api.interceptors.request.use((config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+// Request interceptor - token ekleme
+api.interceptors.request.use(
+    (config) => {
+        const token = document.cookie.replace(/(?:(?:^|.*;\s*)token\s*=\s*([^;]*).*$)|^.*$/, "$1");
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
     }
-    return config;
-}, (error) => {
-    return Promise.reject(error);
-});
+);
 
 // Yanıt interceptor'ı
 api.interceptors.response.use((response) => {

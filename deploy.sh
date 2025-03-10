@@ -27,9 +27,9 @@ sudo apt install -y nginx
 echo "📁 Proje dizini oluşturuluyor..."
 mkdir -p /var/www/admin-panel
 
-# Projeyi klonla (Bu kısmı kendi repo adresinizle değiştirin)
+# Projeyi klonla
 echo "📥 Proje klonlanıyor..."
-git clone YOUR_REPOSITORY_URL /var/www/admin-panel
+git clone https://github.com/ozdemirmurat2000/osymappadminpanel.git /var/www/admin-panel
 
 # Frontend kurulumu
 echo "🛠️ Frontend kuruluyor..."
@@ -42,7 +42,7 @@ echo "🔧 Nginx yapılandırılıyor..."
 sudo tee /etc/nginx/sites-available/admin-panel << EOF
 server {
     listen 80;
-    server_name your_domain.com; # Domain adınızı buraya yazın
+    server_name 13.60.94.155; # IP adresiniz
 
     root /var/www/admin-panel/build;
     index index.html;
@@ -58,6 +58,16 @@ server {
         proxy_set_header Connection 'upgrade';
         proxy_set_header Host \$host;
         proxy_cache_bypass \$http_upgrade;
+    }
+
+    # CORS ayarları
+    add_header 'Access-Control-Allow-Origin' '*' always;
+    add_header 'Access-Control-Allow-Methods' 'GET, POST, PUT, DELETE, OPTIONS' always;
+    add_header 'Access-Control-Allow-Headers' 'DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range,Authorization' always;
+    add_header 'Access-Control-Expose-Headers' 'Content-Length,Content-Range' always;
+
+    if (\$request_method = 'OPTIONS') {
+        return 204;
     }
 }
 EOF
@@ -83,5 +93,5 @@ pm2 startup
 pm2 save
 
 echo "✅ Kurulum tamamlandı!"
-echo "🌐 Sitenize şu adresten erişebilirsiniz: http://your_domain.com"
-echo "⚠️ Lütfen domain adını ve SSL sertifikasını yapılandırmayı unutmayın!" 
+echo "🌐 Sitenize şu adresten erişebilirsiniz: http://13.60.94.155"
+echo "⚠️ Not: AWS güvenlik grubunuzda port 80'i açmayı unutmayın!" 
